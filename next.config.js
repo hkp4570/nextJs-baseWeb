@@ -17,4 +17,9 @@ const plugins = [
 
 module.exports = withPlugins(plugins,{
     reactStrictMode: true,
+    publicRuntimeConfig: {
+        // Will be available on both server and client
+        staticFolder: '/static',
+        baseUrl: 'http://localhost:3001/'
+    },
 })
