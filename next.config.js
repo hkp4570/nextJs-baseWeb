@@ -22,4 +22,10 @@ module.exports = withPlugins(plugins,{
         staticFolder: '/static',
         baseUrl: 'http://localhost:3001/'
     },
+    env:{
+        theme: {
+            primaryColor: '#d4380d',
+            linkColor: '#610b00',
+        },
+    }
 })
