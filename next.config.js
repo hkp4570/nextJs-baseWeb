@@ -23,9 +23,7 @@ module.exports = withPlugins(plugins,{
         baseUrl: 'http://localhost:3001/'
     },
     env:{
-        theme: {
-            primaryColor: '#d4380d',
-            linkColor: '#610b00',
-        },
+        primaryColor: '#d4380d',
+        linkColor: '#610b00',
     }
 })

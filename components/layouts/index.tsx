@@ -1,6 +1,7 @@
 import React, {ReactNode} from 'react'
 import { Layout } from "antd"
-import HeaderCp from './HeaderCp';
+import HeaderCp from './HeaderCp'
+import FooterCp from "./FooterCp"
 
 const {Header, Footer, Content} = Layout
 
@@ -13,7 +14,9 @@ function Layouts({children}:{children:ReactNode}) {
             <Content>
                 {children}
             </Content>
-            <Footer>footer</Footer>
+            <Footer>
+                <FooterCp/>
+            </Footer>
         </Layout>
     );
 }
