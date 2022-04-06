@@ -2,11 +2,12 @@ import React from 'react';
 import dva, { connect } from 'dva-no-router';
 import { Provider } from 'react-redux';
 import model from './models/index';
+import {isBrowser} from "./utils/util";
 
 const checkServer = () => Object.prototype.toString.call(global.process) === '[object process]';
 // eslint-disable-next-line
 const __NEXT_DVA_STORE__ =  '__NEXT_DVA_STORE__'
-
+let store;
 /**
  * 参考dva文档https://github.com/dvajs/dva/tree/master/examples/with-nextjs
  * ? 在页面中使用withDva连接时会报错  可能是next版本问题
@@ -34,8 +35,7 @@ export function createDvaStore(initialState) {
     app.start();
     // console.log(app);
     // eslint-disable-next-line
-    const store = app._store
-    return store;
+    return app._store;
 }
 
 function getOrCreateStore(initialState) {
@@ -54,7 +54,7 @@ function getOrCreateStore(initialState) {
     return window[__NEXT_DVA_STORE__];
 }
 
-export default function withDva(...args) {
+export function withDva(...args) {
     return function CreateNextPage(Component) {
         const ComponentWithDva = (props = {}) => {
             const { store, initialProps, initialState } = props;
@@ -84,4 +84,14 @@ export default function withDva(...args) {
         };
         return ComponentWithDva;
     };
+}
+
+export function createStore(initialState){
+    if(isBrowser()){
+        if(!store){
+            store = createDvaStore({});
+        }
+        return store;
+    }
+    return createDvaStore(initialState);
 }

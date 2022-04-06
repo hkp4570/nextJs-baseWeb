@@ -23,6 +23,9 @@ module.exports = withPlugins(plugins,{
         baseUrl: 'http://localhost:3001/'
     },
     env:{
+        name: 'jwpay',
+        version: '1.0.0',
+        title: '及未支付',
         primaryColor: '#d4380d',
         linkColor: '#610b00',
     }

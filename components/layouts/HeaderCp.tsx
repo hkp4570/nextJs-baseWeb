@@ -26,9 +26,9 @@ function HeaderCp() {
             </Row>
             <Col>
                 <Space>
-                    <Link href={'/task/pubList'}>
+                    <Link href={'/task/publish'}>
                         <a>
-                            <Tooltip title="发布任务">
+                            <Tooltip title="发布任务" placement={'bottom'}>
                                 <PlusOutlined className={'plusIcon'} />
                             </Tooltip>
                         </a>
