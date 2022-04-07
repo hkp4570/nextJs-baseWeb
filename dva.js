@@ -1,7 +1,7 @@
 import React from 'react';
 import dva, { connect } from 'dva-no-router';
 import { Provider } from 'react-redux';
-import model from './models/index';
+import model from './models';
 import {isBrowser} from "./utils/util";
 
 const checkServer = () => Object.prototype.toString.call(global.process) === '[object process]';
