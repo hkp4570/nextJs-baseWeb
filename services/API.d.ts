@@ -3,4 +3,7 @@ declare namespace API {
         code: number,
         msg: string
     }
+    export interface TaskData<T> extends ResponseStruct {
+        data: T
+    }
 }

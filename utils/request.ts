@@ -7,7 +7,7 @@ interface Config extends RequestInit {
 }
 
 const baseUrl = 'http://localhost:4000';
-export const http = async (url: string, config: Config = {}) => {
+export const http = async<H> (url: string, config: Config = {}) => {
     const {data, headers, ...customConfig} = config;
     // ? 自定义请求头跨域问题
     const _config = {
@@ -22,7 +22,7 @@ export const http = async (url: string, config: Config = {}) => {
     } else {
         _config.body = JSON.stringify(data || {});
     }
-    return window.fetch(baseUrl + url, _config).then(async (response) => {
+    return fetch(baseUrl + url, _config).then(async (response) => {
         if (response.status === 401) {
             await Router.replace('/login');
             return Promise.reject(await response.json());

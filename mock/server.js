@@ -1,5 +1,5 @@
 const express = require('express');
-const { users} = require('./mock');
+const {tasks, users} = require('./mock');
 
 const app = express();
 // 解决跨域
@@ -17,6 +17,13 @@ app.post('/getUser', function (req, res) {
     res.send({
         code: 0,
         data: users,
+        msg: 'ok',
+    })
+})
+app.post('/getTasks', function (req, res) {
+    res.send({
+        code: 0,
+        data: tasks,
         msg: 'ok',
     })
 })
