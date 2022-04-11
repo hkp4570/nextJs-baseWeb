@@ -25,7 +25,6 @@ module.exports = withPlugins(plugins,{
     env:{
         name: 'jwpay',
         version: '1.0.0',
-        title: '及未支付',
         primaryColor: '#d4380d',
         linkColor: '#610b00',
     }

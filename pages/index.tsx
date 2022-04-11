@@ -2,6 +2,8 @@ import React, {ReactNode} from "react";
 import styled from 'styled-components';
 import {TasksType, UsersType} from "../type/type";
 import {getTasks, getUser} from "../services/global";
+import {Card, List} from "antd";
+import TaskCard from "../components/tasks/TaskCard";
 
 const H1 = styled.h1`
   color: aqua;
@@ -12,16 +14,40 @@ interface IProps {
     getUserAPI: () => Promise<UsersType>,
     tasks: TasksType[],
     user: UsersType[],
+    total: number,
 }
 
 const Home = (props: IProps) => {
-    const {tasks, user} = props;
-    console.log(tasks, 'tasks')
-    console.log(user, 'user')
+    const {tasks, user, total} = props;
+    const pagination = {
+        current: 1,
+        pageSize: 6,
+        total,
+        showTotal: (total:number) => `共 ${total} 个`,
+        // onChange: this.onPageChange,
+    }
     return (
-        <div>
-            <H1>及未支付</H1>
-        </div>
+        <Card title={'热门人物'} bordered={false} style={{padding: 20}}>
+            <List<TasksType>
+                grid={{
+                    gutter: 16,
+                    xs: 1,
+                    sm: 2,
+                    md: 4,
+                    lg: 4,
+                    xl: 6,
+                    xxl: 3,
+                }}
+                size={'large'}
+                dataSource={tasks}
+                renderItem={item => (
+                    <List.Item>
+                        <TaskCard task={item} user={user} />
+                    </List.Item>
+                )}
+                pagination={pagination}
+            />
+        </Card>
     )
 }
 
@@ -42,8 +68,9 @@ export async function getServerSideProps() {
     const user = await getUser();
     return {
         props: {
-            tasks,
-            user,
+            tasks: tasks.data.tasks,
+            total: tasks.data.total,
+            user: user.data[1],
         },
     }
 }

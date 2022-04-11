@@ -1,3 +1,4 @@
+const Mock = require('mockjs');
 
 const files = {
     1: {
@@ -89,7 +90,29 @@ const users = {
     },
 }
 
-const tasks = {
+const tasks = Mock.mock({
+    'tasks|100':[
+        {
+            id: Mock.mock('@increment'),
+            userId: 1,
+            title: Mock.mock('@csentence(10,15)'),
+            desc: Mock.mock('@cparagraph(3)'),
+            coverFileId: Mock.mock({"number|3-6": 3}),
+            payAmount: Mock.mock({"number|1000-10000": 1000}),
+            startAt: "2019-04-19T00:00:00+08:00",
+            stopAt: "2019-07-10T23:59:59+08:00",
+            link: "https://forum.jwcourse.com/",
+            credentials: "ynxn",
+            status: "pending",
+            createdAt: "2019-04-18T11:36:28+08:00",
+            updatedAt: "2019-04-23T15:41:29+08:00",
+            user: users[1],
+            coverFile: files[3],
+        }
+    ],
+    total: 100,
+})
+const _tasks = {
     1: {
         "id": 1,
         "userId": 1,

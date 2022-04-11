@@ -4,6 +4,7 @@ declare namespace API {
         msg: string
     }
     export interface TaskData<T> extends ResponseStruct {
-        data: T
+        data: T,
+        total?: number,
     }
 }
