@@ -25,10 +25,8 @@ const BgContent = styled.div`
   bottom: 0;
 `
 const TaskCard = ({task,user}:{task:TasksType, user:UsersType}) => {
-    console.log(task,'task')
-    console.log(user,'user')
     const renderLinkTitle = (title:string) => {
-        return <Link href={'/'}>{title}</Link>
+        return <Link href={`/task/${task.id}`}><a>{title}</a></Link>
     }
     return (
         <Card title={renderLinkTitle(task.title)}>
@@ -41,15 +39,20 @@ const TaskCard = ({task,user}:{task:TasksType, user:UsersType}) => {
             </Bg>
             <Row justify={'space-between'} style={{marginTop:10}}>
                 <Row justify={'start'} align={'middle'}>
-                    <Space>
-                        <Col>
-                            <Avatar size={24} src={user.avatarFile.url}/>
-                        </Col>
-                        <Col>{user.username}</Col>
-                    </Space>
+                    <Tooltip title={'发布者'}>
+                        <Space>
+                            <Col>
+                                <Avatar size={24} src={user.avatarFile.url}/>
+                            </Col>
+                            {/* TODO: 用户详情页 */}
+                            <Col><Link href={'/'}><a>{user.username}</a></Link></Col>
+                        </Space>
+                    </Tooltip>
                 </Row>
                 <Col>
-                    {moment(task.createdAt).format('YYYY-MM-DD')}
+                    <Tooltip title={'发布时间'}>
+                        {moment(task.createdAt).format('YYYY-MM-DD')}
+                    </Tooltip>
                 </Col>
             </Row>
         </Card>

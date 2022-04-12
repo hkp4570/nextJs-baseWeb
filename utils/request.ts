@@ -22,12 +22,13 @@ export const http = async<H> (url: string, config: Config = {}) => {
     } else {
         _config.body = JSON.stringify(data || {});
     }
+
     return fetch(baseUrl + url, _config).then(async (response) => {
         if (response.status === 401) {
             await Router.replace('/login');
             return Promise.reject(await response.json());
         } else {
-            const data = await response.json();
+            const data:H = await response.json();
             if (response.ok) {
                 return data;
             }

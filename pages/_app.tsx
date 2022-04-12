@@ -1,31 +1,23 @@
-import '../styles/globals.less'
-import type {AppProps} from 'next/app'
-import {Provider} from "react-redux"
-import {createStore}  from '../dva';
-import Layouts from '../components/layouts'
+import '../styles/globals.less';
+import type {AppProps} from 'next/app';
+import {Provider} from "react-redux";
+import {createStore} from '../dva';
+import Layouts from '../components/layouts';
+import {ConfigProvider} from 'antd';
+import zhCN from 'antd/lib/locale/zh_CN';
+import moment from 'moment';
+import 'moment/locale/zh-cn';
+
+moment.locale('zh-cn');
 
 function MyApp({Component, pageProps}: AppProps) {
-    // getInitialProps({ Component, ctx }) {
-    //     const { req, res, pathname, query, store } = ctx
-    //
-    //     let pageError, pageProps
-    //     try {
-    //         pageProps = Component.getInitialProps ? await Component.getInitialProps(ctx) : {};
-    //     } catch (error) {
-    //         if (error instanceof JWPApiResponse) {
-    //             pageError = { status: error.status, title: error.message }
-    //         } else {
-    //             throw error
-    //         }
-    //     }
-    //
-    //     return { pathname, query, store, pageError, pageProps }
-    // }
-    return  <Provider store={createStore({})}>
-        <Layouts>
-        <Component {...pageProps} />
-        </Layouts>
-    </Provider>
+    return <ConfigProvider locale={zhCN}>
+        <Provider store={createStore({})}>
+            <Layouts>
+                <Component {...pageProps} />
+            </Layouts>
+        </Provider>
+    </ConfigProvider>
 }
 
 export default MyApp

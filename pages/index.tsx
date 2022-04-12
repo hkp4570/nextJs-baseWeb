@@ -1,33 +1,34 @@
 import React, {ReactNode} from "react";
-import styled from 'styled-components';
 import {TasksType, UsersType} from "../type/type";
 import {getTasks, getUser} from "../services/global";
 import {Card, List} from "antd";
 import TaskCard from "../components/tasks/TaskCard";
-
-const H1 = styled.h1`
-  color: aqua;
-`
+import {PaginationProps} from "antd/es/pagination/Pagination";
+import {loadComponents} from "next/dist/server/load-components";
 
 interface IProps {
     children?: ReactNode,
     getUserAPI: () => Promise<UsersType>,
     tasks: TasksType[],
-    user: UsersType[],
+    user: UsersType,
     total: number,
 }
-
+// TODO: 切换分页
+const filterParams: { pageNum: number, pageSize: number } = {pageNum: 1, pageSize: 6}
 const Home = (props: IProps) => {
     const {tasks, user, total} = props;
-    const pagination = {
-        current: 1,
-        pageSize: 6,
+    const pagination:PaginationProps = {
+        current: filterParams.pageNum,
+        pageSize: filterParams.pageSize,
         total,
-        showTotal: (total:number) => `共 ${total} 个`,
-        // onChange: this.onPageChange,
+        showTotal: (total: number) => `共 ${total} 个`,
+        showSizeChanger: false,
+        onChange: (page: number) => {
+            filterParams.pageNum = page;
+        },
     }
     return (
-        <Card title={'热门人物'} bordered={false} style={{padding: 20}}>
+        <Card title={'热门任务'} bordered={false} style={{padding: 20}}>
             <List<TasksType>
                 grid={{
                     gutter: 16,
@@ -42,7 +43,7 @@ const Home = (props: IProps) => {
                 dataSource={tasks}
                 renderItem={item => (
                     <List.Item>
-                        <TaskCard task={item} user={user} />
+                        <TaskCard task={item} user={user}/>
                     </List.Item>
                 )}
                 pagination={pagination}
@@ -51,25 +52,27 @@ const Home = (props: IProps) => {
     )
 }
 
-// function mapStateToProps(state: ConnectState) {
+// function mapStateToProps(state) {
 //     return {
-//         userInfo: state.global.userInfo
+//         // tasks: state.global.tasks
 //     }
 // }
 //
-// function mapDispatchToProps(dispatch:Dispatch<any>) {
+// function mapDispatchToProps(dispatch) {
 //     return {
-//         getUserAPI: () => dispatch({type: 'global/getUserAPI'})
+//         getUserAPI: () => dispatch({type: 'global/getUserAPI'}),
+//         getTaskAPI: payload => dispatch({type:'global/getTaskAPI',payload})
 //     }
 // }
 
 export async function getServerSideProps() {
-    const tasks = await getTasks({});
+    const tasks = await getTasks({pageNum: 1, pageSize: 6});
+    console.log(tasks,'tasks')
     const user = await getUser();
     return {
         props: {
-            tasks: tasks.data.tasks,
-            total: tasks.data.total,
+            tasks: tasks.tasks,
+            total: tasks.total,
             user: user.data[1],
         },
     }

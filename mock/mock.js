@@ -93,7 +93,7 @@ const users = {
 const tasks = Mock.mock({
     'tasks|100':[
         {
-            id: Mock.mock('@increment'),
+            "id|+1": Mock.mock('@increment'),
             userId: 1,
             title: Mock.mock('@csentence(10,15)'),
             desc: Mock.mock('@cparagraph(3)'),
