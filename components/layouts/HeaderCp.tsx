@@ -34,7 +34,7 @@ function HeaderCp() {
                         </a>
 
                     </Link>
-                    <Link href={'/login'}>
+                    <Link href={'/account/login'}>
                         <a className={'loginBtn'}>登录</a>
                     </Link>
                 </Space>

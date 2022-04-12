@@ -4,7 +4,6 @@ import {getTasks, getUser} from "../services/global";
 import {Card, List} from "antd";
 import TaskCard from "../components/tasks/TaskCard";
 import {PaginationProps} from "antd/es/pagination/Pagination";
-import {loadComponents} from "next/dist/server/load-components";
 
 interface IProps {
     children?: ReactNode,
@@ -67,7 +66,6 @@ const Home = (props: IProps) => {
 
 export async function getServerSideProps() {
     const tasks = await getTasks({pageNum: 1, pageSize: 6});
-    console.log(tasks,'tasks')
     const user = await getUser();
     return {
         props: {
