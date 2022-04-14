@@ -1,8 +1,12 @@
 import {http} from '../utils/request'
-import {TasksType, UsersType} from "../type/type";
+import {CommentType, TasksType, UsersType} from "../type/type";
 
 interface TaskParamsType extends API.SearchParams{
-
+    id?:number,
+}
+interface CommentParamsType {
+    userId:number,
+    taskId:number,
 }
 export function getUser() {
     return http<API.ResponseType<UsersType[]>>('/api/user', {
@@ -10,7 +14,6 @@ export function getUser() {
     })
 }
 export async function getTasks(taskParams: TaskParamsType) {
-    console.log(taskParams,'taskParams')
     const { pageNum } = taskParams;
     const _t = await http<API.ResponseType<{ tasks:TasksType[], total?: number, }>>('/api/task',{
         method: 'POST',
@@ -18,9 +21,21 @@ export async function getTasks(taskParams: TaskParamsType) {
     const _d = _t.data.tasks;
     const _start:number = pageNum === 1 ? 0 : (pageNum! - 1) * 6;
     const _r = _d.slice(_start, _start+6);
-    console.log(_r,'_r');
     return {
         tasks: _r,
         total: _t.data.total
     };
+}
+export function getTaskDetail(params:TaskParamsType){
+    return http<API.ResponseType<TasksType>>('/api/taskDetail',{
+        method:'POST',
+        data: params,
+    })
+}
+// 根据用户id和任务id获取对应的评论
+export function getComment(params:CommentParamsType){
+    return http<API.ResponseType<CommentType[]>>('/api/comment',{
+        method: 'POST',
+        data: params,
+    })
 }

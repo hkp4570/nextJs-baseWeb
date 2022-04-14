@@ -3,23 +3,27 @@ import {Model} from 'dva-no-router';
 import {TasksType, UsersType} from "../type/type";
 import {ConnectState} from "./connect";
 
-export interface GlobalModelState  {
+export interface GlobalModelState {
     userInfo: UsersType | object,
     tasks: TasksType[],
+    newTasks: TasksType[],
 }
+
 interface GlobalModel extends Model {
     state: GlobalModelState
 }
+
 const globalModel: GlobalModel = {
     namespace: 'global',
     state: {
         userInfo: {},
         tasks: [],
+        newTasks: [],
     },
     effects: {
         * getUserAPI(_, {call, put, select}) {
-            const cache = yield select((state:ConnectState) => state.global.userInfo);
-            if(!Object.keys(cache).length){
+            const cache = yield select((state: ConnectState) => state.global.userInfo);
+            if (!Object.keys(cache).length) {
                 const response = yield call(getUser);
                 if (response.code === 0) {
                     yield put({
@@ -30,7 +34,7 @@ const globalModel: GlobalModel = {
                 }
             }
         },
-        * getTaskAPI({payload},{call,put}){
+        * getTaskAPI({payload}, {call, put}) {
             const response = yield call(getTasks, payload);
             if (response.code === 0) {
                 yield put({
@@ -39,11 +43,20 @@ const globalModel: GlobalModel = {
                 })
             }
         },
-        * saveUser({payload},{put}){
+        * saveUser({payload}, {put}) {
             yield put({
                 type: 'setState',
-                payload: { userInfo: payload }
+                payload: {userInfo: payload}
             })
+        },
+        * getNewTask({payload}, {call, put}) {
+            const response = yield call(getTasks, payload);
+            if (response.code === 0) {
+                yield put({
+                    type: 'setState',
+                    payload: {newTasks: response.data}
+                })
+            }
         }
     },
     reducers: {

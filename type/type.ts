@@ -44,3 +44,13 @@ export type TasksType = {
     user: UsersType;
     coverFile: FilesType;
 }
+export type CommentType = {
+    id: number;
+    taskId: number;
+    userId: number;
+    score: number;
+    text: string;
+    createdAt: string;
+    updatedAt: string;
+    user: UsersType;
+}

@@ -1,6 +1,6 @@
-const Mock = require('mockjs');
+import {CommentType, FilesType, TasksType, UsersType} from "../type/type";
 
-const files = {
+const files: { 1: FilesType, 2: FilesType, 3: FilesType, 4: FilesType, 5: FilesType, 6: FilesType } = {
     1: {
         "id": 1,
         "userId": 1,
@@ -75,7 +75,7 @@ const files = {
     },
 }
 
-const users = {
+const users: UsersType = {
     "id": 1,
     "email": "demo@mg.jwpay.app",
     "username": "天火",
@@ -87,31 +87,8 @@ const users = {
     "avatarFile": files[1],
     "coverFile": files[2],
 }
-
-const tasks = Mock.mock({
-    'tasks|100':[
-        {
-            "id|+1": Mock.mock('@increment'),
-            userId: 1,
-            title: Mock.mock('@csentence(10,15)'),
-            desc: Mock.mock('@cparagraph(3)'),
-            coverFileId: Mock.mock({"number|3-6": 3}),
-            payAmount: Mock.mock({"number|1000-10000": 1000}),
-            startAt: "2019-04-19T00:00:00+08:00",
-            stopAt: "2019-07-10T23:59:59+08:00",
-            link: "https://forum.jwcourse.com/",
-            credentials: "ynxn",
-            status: "pending",
-            createdAt: "2019-04-18T11:36:28+08:00",
-            updatedAt: "2019-04-23T15:41:29+08:00",
-            user: users[1],
-            coverFile: files[3],
-        }
-    ],
-    total: 100,
-})
-const _tasks = {
-    1: {
+const basicTask: TasksType[] = [
+    {
         "id": 1,
         "userId": 1,
         "title": "开通叽歪论坛会员服务（一个月）",
@@ -126,10 +103,10 @@ const _tasks = {
         "status": "pending",
         "createdAt": "2019-04-18T11:36:28+08:00",
         "updatedAt": "2019-04-23T15:41:29+08:00",
-        "user": users[1],
+        "user": users,
         "coverFile": files[3],
     },
-    2: {
+    {
         "id": 2,
         "userId": 1,
         "title": "开通叽歪论坛会员服务（三个月）",
@@ -144,10 +121,10 @@ const _tasks = {
         "status": "pending",
         "createdAt": "2019-04-18T11:36:28+08:00",
         "updatedAt": "2019-04-23T15:41:29+08:00",
-        "user": users[1],
+        "user": users,
         "coverFile": files[4],
     },
-    3: {
+    {
         "id": 3,
         "userId": 1,
         "title": "开通叽歪论坛会员服务（半年）",
@@ -162,10 +139,10 @@ const _tasks = {
         "status": "pending",
         "createdAt": "2019-04-18T11:36:28+08:00",
         "updatedAt": "2019-04-23T15:41:29+08:00",
-        "user": users[1],
+        "user": users,
         "coverFile": files[5],
     },
-    4: {
+    {
         "id": 4,
         "userId": 1,
         "title": "开通叽歪论坛会员服务（一年）",
@@ -180,12 +157,12 @@ const _tasks = {
         "status": "pending",
         "createdAt": "2019-04-18T11:36:28+08:00",
         "updatedAt": "2019-04-23T15:41:29+08:00",
-        "user": users[1],
+        "user": users,
         "coverFile": files[6],
     },
-}
+]
 
-const comments = [
+const comments: CommentType[] = [
     {
         "id": 1,
         "taskId": 1,
@@ -194,7 +171,7 @@ const comments = [
         "text": "付费完成输入用户名后就立即开通了，赞！",
         "createdAt": "2019-04-18T11:36:28+08:00",
         "updatedAt": "2019-04-23T15:41:29+08:00",
-        "user": users[1],
+        "user": users,
     },
     {
         "id": 2,
@@ -204,7 +181,7 @@ const comments = [
         "text": "挺方便的！",
         "createdAt": "2019-04-18T11:36:28+08:00",
         "updatedAt": "2019-04-23T15:41:29+08:00",
-        "user": users[1],
+        "user": users,
     },
     {
         "id": 3,
@@ -214,7 +191,7 @@ const comments = [
         "text": "还可以~",
         "createdAt": "2019-04-18T11:36:28+08:00",
         "updatedAt": "2019-04-23T15:41:29+08:00",
-        "user": users[1],
+        "user": users,
     },
     {
         "id": 4,
@@ -224,7 +201,7 @@ const comments = [
         "text": "试了几次才成功:)",
         "createdAt": "2019-04-18T11:36:28+08:00",
         "updatedAt": "2019-04-23T15:41:29+08:00",
-        "user": users[1],
+        "user": users,
     },
     {
         "id": 5,
@@ -234,11 +211,21 @@ const comments = [
         "text": "开通失败:)",
         "createdAt": "2019-04-18T11:36:28+08:00",
         "updatedAt": "2019-04-23T15:41:29+08:00",
-        "user": users[1],
+        "user": users,
     },
 ]
 
-module.exports = {
+function handleTask() {
+    let _task: TasksType[] = [];
+    while (_task.length < 100) {
+        const _t = basicTask.copyWithin(basicTask.length, 0, 4);
+        _task = _task.concat(_t);
+    }
+    return _task;
+}
+const tasks = handleTask();
+
+export {
     files,
     users,
     tasks,
