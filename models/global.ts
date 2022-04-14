@@ -1,6 +1,7 @@
 import {getTasks, getUser} from '../services/global'
 import {Model} from 'dva-no-router';
 import {TasksType, UsersType} from "../type/type";
+import {ConnectState} from "./connect";
 
 export interface GlobalModelState  {
     userInfo: UsersType | object,
@@ -16,14 +17,17 @@ const globalModel: GlobalModel = {
         tasks: [],
     },
     effects: {
-        * getUserAPI(_, {call, put}) {
-            const response = yield call(getUser);
-            if (response.code === 0) {
-                yield put({
-                    type: 'setState',
-                    payload: {userInfo: response.data}
-                })
-                return response.data;
+        * getUserAPI(_, {call, put, select}) {
+            const cache = yield select((state:ConnectState) => state.global.userInfo);
+            if(!Object.keys(cache).length){
+                const response = yield call(getUser);
+                if (response.code === 0) {
+                    yield put({
+                        type: 'setState',
+                        payload: {userInfo: response.data[1]}
+                    })
+                    // return response.data;
+                }
             }
         },
         * getTaskAPI({payload},{call,put}){
@@ -34,6 +38,12 @@ const globalModel: GlobalModel = {
                     payload: {tasks: response.tasks}
                 })
             }
+        },
+        * saveUser({payload},{put}){
+            yield put({
+                type: 'setState',
+                payload: { userInfo: payload }
+            })
         }
     },
     reducers: {

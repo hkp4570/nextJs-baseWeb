@@ -1,9 +1,11 @@
 import React, {ReactNode} from "react";
+import {useRouter} from 'next/router';
 import {TasksType, UsersType} from "../type/type";
 import {getTasks, getUser} from "../services/global";
 import {Card, List} from "antd";
 import TaskCard from "../components/tasks/TaskCard";
 import {PaginationProps} from "antd/es/pagination/Pagination";
+import {ParsedUrlQuery} from "querystring";
 
 interface IProps {
     children?: ReactNode,
@@ -12,18 +14,27 @@ interface IProps {
     user: UsersType,
     total: number,
 }
-// TODO: 切换分页
+interface Query extends ParsedUrlQuery {
+    page?: string,
+}
+
 const filterParams: { pageNum: number, pageSize: number } = {pageNum: 1, pageSize: 6}
 const Home = (props: IProps) => {
     const {tasks, user, total} = props;
-    const pagination:PaginationProps = {
-        current: filterParams.pageNum,
-        pageSize: filterParams.pageSize,
+    const Router = useRouter();
+    const {query}: { query: Query } = Router;
+    const pagination: PaginationProps = {
+        current: Number(query.page) || 1,
+        pageSize: 6,
         total,
         showTotal: (total: number) => `共 ${total} 个`,
         showSizeChanger: false,
         onChange: (page: number) => {
             filterParams.pageNum = page;
+            Router.push({
+                pathname: '/',
+                query: {page}
+            })
         },
     }
     return (
@@ -51,27 +62,15 @@ const Home = (props: IProps) => {
     )
 }
 
-// function mapStateToProps(state) {
-//     return {
-//         // tasks: state.global.tasks
-//     }
-// }
-//
-// function mapDispatchToProps(dispatch) {
-//     return {
-//         getUserAPI: () => dispatch({type: 'global/getUserAPI'}),
-//         getTaskAPI: payload => dispatch({type:'global/getTaskAPI',payload})
-//     }
-// }
-
-export async function getServerSideProps() {
-    const tasks = await getTasks({pageNum: 1, pageSize: 6});
+export async function getServerSideProps({query}: { query:Query }) {
+    const page = Number(query.page) || 1;
+    const tasks = await getTasks({pageNum: page});
     const user = await getUser();
     return {
         props: {
             tasks: tasks.tasks,
             total: tasks.total,
-            user: user.data[1],
+            user: user.data,
         },
     }
 }

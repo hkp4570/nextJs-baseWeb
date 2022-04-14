@@ -44,8 +44,7 @@ const TaskCard = ({task,user}:{task:TasksType, user:UsersType}) => {
                             <Col>
                                 <Avatar size={24} src={user.avatarFile.url}/>
                             </Col>
-                            {/* TODO: 用户详情页 */}
-                            <Col><Link href={'/'}><a>{user.username}</a></Link></Col>
+                            <Col><Link href={'/account/information'}><a>{user.username}</a></Link></Col>
                         </Space>
                     </Tooltip>
                 </Row>

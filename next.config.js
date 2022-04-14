@@ -7,7 +7,7 @@ const plugins = [
         lessLoaderOptions: {
             lessOptions: {
                 modifyVars: {
-                    "primary-color": "#1890ff",
+                    "primary-color": "#d4380d",
                     "border-radius-base": "8px",
                 },
             },

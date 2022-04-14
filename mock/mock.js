@@ -76,18 +76,16 @@ const files = {
 }
 
 const users = {
-    1: {
-        "id": 1,
-        "email": "demo@mg.jwpay.app",
-        "username": "天火",
-        "avatarFileId": 1,
-        "coverFileId": 2,
-        "intro": "Coding for Free",
-        "createdAt": "2019-02-12T14:28:09+08:00",
-        "updatedAt": "2019-04-25T10:38:51+08:00",
-        "avatarFile": files[1],
-        "coverFile": files[2],
-    },
+    "id": 1,
+    "email": "demo@mg.jwpay.app",
+    "username": "天火",
+    "avatarFileId": 1,
+    "coverFileId": 2,
+    "intro": "Coding for Free",
+    "createdAt": "2019-02-12T14:28:09+08:00",
+    "updatedAt": "2019-04-25T10:38:51+08:00",
+    "avatarFile": files[1],
+    "coverFile": files[2],
 }
 
 const tasks = Mock.mock({

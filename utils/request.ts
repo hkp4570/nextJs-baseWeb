@@ -6,7 +6,7 @@ interface Config extends RequestInit {
     data?: object,
 }
 
-const baseUrl = 'http://localhost:4000';
+const baseUrl = 'http://localhost:3001';
 export const http = async<H> (url: string, config: Config = {}) => {
     const {data, headers, ...customConfig} = config;
     // ? 自定义请求头跨域问题
