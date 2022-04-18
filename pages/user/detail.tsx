@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import {getComment, getTaskDetail, getTasks} from "../../services/global";
 import {CommentType, TasksType} from "../../type/type";
 import styled from "styled-components";
@@ -7,8 +7,8 @@ import TaskCard from "../../components/tasks/TaskCard";
 import TaskCommentItem from '../../components/tasks/TaskCommentItem';
 import {PaginationProps} from "antd/es/pagination/Pagination";
 import {connect} from "react-redux";
-// import {ConnectState} from "../../models/connect";
-// import {Dispatch} from "redux";
+import {ConnectState} from "../../models/connect";
+import {getOrCreateStore} from "../../dva";
 
 interface IProps {
     taskDetail: TasksType,
@@ -40,13 +40,7 @@ const Detail = (props: IProps) => {
             pageNum = page;
         },
     }
-    useEffect(() => {
-        if(pageNum){ // 切换分页
-            // dispatch({
-            //     type:'global/getNewTask'
-            // })
-        }
-    },[])
+
     return (
         <div>
             <DetailBg url={user.coverFile.url}>
@@ -56,6 +50,7 @@ const Detail = (props: IProps) => {
                     <Typography.Text type="secondary">{user.intro}</Typography.Text>
                 </div>
             </DetailBg>
+
             <Row gutter={24} style={{padding:24}}>
                 <Col span={16}>
                     <Card title={'最新任务'}>
@@ -93,27 +88,35 @@ const Detail = (props: IProps) => {
         </div>
     );
 };
-export async function getServerSideProps({query}:{query:{id?:string}}){
-    const taskDetail = await getTaskDetail({id:Number(query.id)});
-    const newTasks = await getTasks({pageNum:1});
-    const comments = await getComment({userId:taskDetail.data.user.id,taskId:taskDetail.data.id});
+function mapStateToProps (state:ConnectState) {
     return {
-        props:{
-            taskDetail:taskDetail.data,
-            newTasks: newTasks.tasks,
-            total: newTasks.total,
-            comments: comments.data,
-        }
+        newTasks:state.global.newTasks,
     }
 }
-// function mapStateToProps(state:ConnectState){
-//     return {
-//         newTasks: state.global.newTasks
-//     }
-// }
 function mapDispatchToProps(){
     return {
 
     }
 }
-export default connect(null,mapDispatchToProps)(Detail);
+export default connect(mapStateToProps,mapDispatchToProps)(Detail);
+
+export async function getServerSideProps({query}:{query:{id?:string}}){
+    const store = getOrCreateStore({});
+    const taskDetail = await getTaskDetail({id:Number(query.id)});
+    const newTasks = await getTasks({pageNum:1});
+    const comments = await getComment({userId:taskDetail.data.user.id,taskId:taskDetail.data.id});
+    await store.dispatch({
+        type: 'global/setNewTask',
+        payload:{
+            newTasks: newTasks.tasks,
+        }
+    })
+    return {
+        props:{
+            taskDetail:taskDetail.data,
+            _initialState: store.getState(),
+            total: newTasks.total,
+            comments: comments.data,
+        }
+    }
+}

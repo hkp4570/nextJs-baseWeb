@@ -7,10 +7,8 @@ import {isBrowser} from "./utils/util";
 const checkServer = () => Object.prototype.toString.call(global.process) === '[object process]';
 // eslint-disable-next-line
 const __NEXT_DVA_STORE__ =  '__NEXT_DVA_STORE__'
-let store;
 /**
  * 参考dva文档https://github.com/dvajs/dva/tree/master/examples/with-nextjs
- * ? 在页面中使用withDva连接时会报错  可能是next版本问题
  * @param initialState
  * @returns {*}
  */
@@ -33,12 +31,11 @@ export function createDvaStore(initialState) {
     }
     app.router(() => {});
     app.start();
-    // console.log(app);
     // eslint-disable-next-line
     return app._store;
 }
 
-function getOrCreateStore(initialState) {
+export function getOrCreateStore(initialState) {
     const isServer = checkServer();
     if (isServer) { // run in server
         // console.log('server');
@@ -84,14 +81,4 @@ export function withDva(...args) {
         };
         return ComponentWithDva;
     };
-}
-
-export function createStore(initialState){
-    if(isBrowser()){
-        if(!store){
-            store = createDvaStore({});
-        }
-        return store;
-    }
-    return createDvaStore(initialState);
 }

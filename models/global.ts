@@ -17,8 +17,8 @@ const globalModel: GlobalModel = {
     namespace: 'global',
     state: {
         userInfo: {},
-        tasks: [],
-        newTasks: [],
+        tasks: [], // 热门任务
+        newTasks: [], // 最新任务
     },
     effects: {
         * getUserAPI(_, {call, put, select}) {
@@ -57,6 +57,12 @@ const globalModel: GlobalModel = {
                     payload: {newTasks: response.data}
                 })
             }
+        },
+        * setNewTask({payload}, {put}){
+            yield put({
+                type: 'setState',
+                payload,
+            })
         }
     },
     reducers: {

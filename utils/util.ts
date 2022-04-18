@@ -32,5 +32,5 @@ export function needLogin({pathname, query} : BaseRouter){
 }
 
 export function isBrowser(){
-    return typeof window !== undefined;
+    return typeof window !== 'undefined';
 }
