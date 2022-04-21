@@ -1,7 +1,7 @@
 import React, {ReactNode} from "react";
 import {useRouter} from 'next/router';
 import {TasksType, UsersType} from "../type/type";
-import {getTasks, getUser} from "../services/global";
+import {getTasks} from "../services/global";
 import {Card, List} from "antd";
 import TaskCard from "../components/tasks/TaskCard";
 import {PaginationProps} from "antd/es/pagination/Pagination";
@@ -11,7 +11,6 @@ interface IProps {
     children?: ReactNode,
     getUserAPI: () => Promise<UsersType>,
     tasks: TasksType[],
-    user: UsersType,
     total: number,
 }
 interface Query extends ParsedUrlQuery {
@@ -20,7 +19,7 @@ interface Query extends ParsedUrlQuery {
 
 const filterParams: { pageNum: number, pageSize: number } = {pageNum: 1, pageSize: 6}
 const Home = (props: IProps) => {
-    const {tasks, user, total} = props;
+    const {tasks, total} = props;
     const Router = useRouter();
     const {query}: { query: Query } = Router;
     const pagination: PaginationProps = {
@@ -53,7 +52,7 @@ const Home = (props: IProps) => {
                 dataSource={tasks}
                 renderItem={item => (
                     <List.Item>
-                        <TaskCard task={item} user={user}/>
+                        <TaskCard task={item}/>
                     </List.Item>
                 )}
                 pagination={pagination}
@@ -65,12 +64,10 @@ const Home = (props: IProps) => {
 export async function getServerSideProps({query}: { query:Query }) {
     const page = Number(query.page) || 1;
     const tasks = await getTasks({pageNum: page});
-    const user = await getUser();
     return {
         props: {
             tasks: tasks.tasks,
             total: tasks.total,
-            user: user.data,
         },
     }
 }

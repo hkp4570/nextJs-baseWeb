@@ -54,3 +54,13 @@ export type CommentType = {
     updatedAt: string;
     user: UsersType;
 }
+
+export interface CommentParamsType {
+    userId: number,
+    taskId: number,
+}
+
+export interface LoginParamsType {
+    username: string,
+    password: string,
+}

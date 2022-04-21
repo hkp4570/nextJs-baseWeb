@@ -1,8 +1,9 @@
-import React, {useState} from 'react';
+import React from 'react';
 import Head from 'next/head';
-import Link from "next/link";
+import {useRouter} from 'next/router';
 import styled from 'styled-components';
 import {Button, Card, Divider, Form, Input} from "antd";
+import {LoginParamsType} from "../../type/type";
 
 const RegisterWrapper = styled.div`
   width: 369px;
@@ -14,12 +15,10 @@ const RegisterWrapper = styled.div`
   margin: 36px auto;
 `
 const Register = () => {
-    const [btnDisabled, setBtnDisabled] = useState<boolean>(false);
-    const handleSubmit = (values:any) => {
-        console.log(values,'values')
-    }
-    const handleFieldsChange = () => {
-        console.log('shi bai')
+    const router = useRouter();
+    const handleSubmit = (values:LoginParamsType) => {
+        console.log(values);
+       router.back();
     }
 
     return (
@@ -32,7 +31,6 @@ const Register = () => {
                     name="basic"
                     initialValues={{remember: true}}
                     onFinish={handleSubmit}
-                    onValuesChange={handleFieldsChange}
                     autoComplete="off"
                 >
                     <Form.Item name="username" rules={[
@@ -50,7 +48,7 @@ const Register = () => {
                     </Form.Item>
                     <Divider/>
                     <Form.Item>
-                        <Button type="primary" htmlType="submit" block disabled={btnDisabled}>注册</Button>
+                        <Button type="primary" htmlType="submit" block>注册</Button>
                     </Form.Item>
                 </Form>
             </Card>

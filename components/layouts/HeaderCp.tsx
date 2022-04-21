@@ -1,11 +1,13 @@
 import React from 'react'
 import {Col, Row, Space, Tooltip} from 'antd'
 import Link from 'next/link'
+import {useRouter} from 'next/router';
 import {
     PlusOutlined
 } from '@ant-design/icons'
 
 function HeaderCp() {
+    const router = useRouter();
     return (
         <Row justify={'space-between'}>
             <Row justify={'start'}>
@@ -29,12 +31,12 @@ function HeaderCp() {
                     <Link href={'/task/publish'}>
                         <a>
                             <Tooltip title="发布任务" placement={'bottom'}>
-                                <PlusOutlined className={'plusIcon'} />
+                                <PlusOutlined className={'plusIcon'}/>
                             </Tooltip>
                         </a>
 
                     </Link>
-                    <Link href={'/account/login'}>
+                    <Link href={`/account/login?redirect=${router.asPath}`}>
                         <a className={'loginBtn'}>登录</a>
                     </Link>
                 </Space>
@@ -55,22 +57,26 @@ function HeaderCp() {
                 vertical-align: middle;
                 cursor: pointer;
               }
-              .appH1, .loginBtn{
+
+              .appH1, .loginBtn {
                 color: #121212;
                 font-size: 1rem;
                 font-weight: 400;
               }
-              .appH1:hover, .loginBtn:hover{
+
+              .appH1:hover, .loginBtn:hover {
                 color: #d4380d;
               }
-              :global(.plusIcon){
+
+              :global(.plusIcon) {
                 font-size: 20px;
                 vertical-align: middle;
               }
-              :global(.plusIcon):hover{
+
+              :global(.plusIcon):hover {
                 color: #d4380d;
               }
-             
+
             `}</style>
         </Row>
     );

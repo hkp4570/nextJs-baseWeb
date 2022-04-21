@@ -9,7 +9,6 @@ interface Config extends RequestInit {
 const baseUrl = 'http://localhost:3001';
 export const http = async<H> (url: string, config: Config = {}) => {
     const {data, headers, ...customConfig} = config;
-    // ? 自定义请求头跨域问题
     const _config = {
         method: 'GET',
         // headers: {

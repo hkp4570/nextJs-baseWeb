@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import {TasksType, UsersType} from "../../type/type";
+import {TasksType} from "../../type/type";
 import {Card, Col, Row, Tooltip, Typography, Avatar, Space} from "antd";
 import Link from "next/link";
 import moment from "moment";
@@ -24,7 +24,7 @@ const BgContent = styled.div`
   left: 0;
   bottom: 0;
 `
-const TaskCard = ({task,user}:{task:TasksType, user:UsersType}) => {
+const TaskCard = ({task}:{task:TasksType}) => {
     const renderLinkTitle = (title:string) => {
         return <Link href={`/task/${task.id}`}><a>{title}</a></Link>
     }
@@ -42,9 +42,9 @@ const TaskCard = ({task,user}:{task:TasksType, user:UsersType}) => {
                     <Tooltip title={'发布者'}>
                         <Space>
                             <Col>
-                                <Avatar size={24} src={user.avatarFile.url}/>
+                                <Avatar size={24} src={task.user.avatarFile.url}/>
                             </Col>
-                            <Col><Link href={`/user/detail/?id=${task.id}`}><a>{user.username}</a></Link></Col>
+                            <Col><Link href={`/user/detail/?id=${task.id}&pageNum=1`}><a>{task.user.username}</a></Link></Col>
                         </Space>
                     </Tooltip>
                 </Row>

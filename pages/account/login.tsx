@@ -1,9 +1,12 @@
-import React from 'react';
+import React, {Dispatch} from 'react';
 import Head from 'next/head';
 import Link from "next/link";
+import {useRouter} from "next/router";
 import styled from 'styled-components';
 import {Button, Card, Col, Form, Input, Row} from "antd";
 import {UserOutlined, LockOutlined} from '@ant-design/icons';
+import {connect} from "react-redux";
+import {LoginParamsType} from "../../type/type";
 
 const LoginWrapper = styled.div`
   width: 369px;
@@ -14,9 +17,26 @@ const LoginWrapper = styled.div`
   bottom: 0;
   margin: 36px auto;
 `
-const Login = () => {
+
+interface IProps {
+    login: (arg: LoginParamsType) => Promise<boolean>
+}
+
+const Login = ({login}: IProps) => {
+    const router = useRouter();
+    console.log(router)
     const handleSubmit = (values: any) => {
-        console.log(values,'values')
+        try {
+            login(values).then(res => {
+                if (res) {
+                    const {query} = router;
+                    // @ts-ignore
+                    router.replace(query.redirect);
+                }
+            })
+        } catch (err) {
+            console.log(err);
+        }
     }
     return (
         <LoginWrapper>
@@ -36,12 +56,12 @@ const Login = () => {
 
                     <Form.Item name="password" rules={[
                         {required: true, message: '请输入密码'},
-                        {min:6, max:20, message: '密码长度必须是6-20位'}
+                        {min: 6, max: 20, message: '密码长度必须是6-20位'}
                     ]}>
                         <Input.Password size={'large'} placeholder="密码" prefix={<LockOutlined/>}/>
                     </Form.Item>
 
-                    <Form.Item >
+                    <Form.Item>
                         <Button block type="primary" htmlType="submit">登录</Button>
                     </Form.Item>
                     <Row justify={'end'}>
@@ -56,4 +76,11 @@ const Login = () => {
     );
 };
 
-export default Login;
+function mapDispatchToProps(dispatch: Dispatch<any>) {
+    return {
+        login: (payload: LoginParamsType) => dispatch({type: 'global/login', payload})
+    }
+}
+
+// @ts-ignore
+export default connect(null, mapDispatchToProps)(Login);
