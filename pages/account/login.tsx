@@ -1,4 +1,4 @@
-import React, {Dispatch} from 'react';
+import React, {Dispatch, useEffect, useState} from 'react';
 import Head from 'next/head';
 import Link from "next/link";
 import {useRouter} from "next/router";
@@ -6,7 +6,9 @@ import styled from 'styled-components';
 import {Button, Card, Col, Form, Input, Row} from "antd";
 import {UserOutlined, LockOutlined} from '@ant-design/icons';
 import {connect} from "react-redux";
-import {LoginParamsType} from "../../type/type";
+import {LoginParamsType, UsersType} from "../../type/type";
+import {ConnectState} from "../../models/connect";
+import Loading from '../../components/Loading';
 
 const LoginWrapper = styled.div`
   width: 369px;
@@ -20,11 +22,12 @@ const LoginWrapper = styled.div`
 
 interface IProps {
     login: (arg: LoginParamsType) => Promise<boolean>
+    userInfo: UsersType
 }
 
-const Login = ({login}: IProps) => {
+const Login = ({login, userInfo}: IProps) => {
+    const [isReady, setIsReady] = useState<boolean>(false);
     const router = useRouter();
-    console.log(router)
     const handleSubmit = (values: any) => {
         try {
             login(values).then(res => {
@@ -38,43 +41,61 @@ const Login = ({login}: IProps) => {
             console.log(err);
         }
     }
-    return (
-        <LoginWrapper>
-            <Head>
-                <title key="title">登录 - 及未支付</title>
-            </Head>
-            <Card title={'登录'}>
-                <Form
-                    name="basic"
-                    initialValues={{remember: true}}
-                    onFinish={handleSubmit}
-                    autoComplete="off"
-                >
-                    <Form.Item name="username" rules={[{required: true, message: '请输入用户名'}]}>
-                        <Input size={'large'} placeholder="用户名" prefix={<UserOutlined/>}/>
-                    </Form.Item>
+    useEffect(() => {
+        if(Object.keys(userInfo).length){
+            const {query} = router;
+            // @ts-ignore
+            router.replace(query.redirect);
+        }else{
+            setIsReady(true);
+        }
+    }, [router, userInfo])
+    return (<div>
+            {
+                isReady ? <LoginWrapper>
+                    <Head>
+                        <title key="title">登录 - 及未支付</title>
+                    </Head>
+                    <Card title={'登录'}>
+                        <Form
+                            name="basic"
+                            initialValues={{remember: true}}
+                            onFinish={handleSubmit}
+                            autoComplete="off"
+                        >
+                            <Form.Item name="username" rules={[{required: true, message: '请输入用户名'}]}>
+                                <Input size={'large'} placeholder="用户名" prefix={<UserOutlined/>}/>
+                            </Form.Item>
 
-                    <Form.Item name="password" rules={[
-                        {required: true, message: '请输入密码'},
-                        {min: 6, max: 20, message: '密码长度必须是6-20位'}
-                    ]}>
-                        <Input.Password size={'large'} placeholder="密码" prefix={<LockOutlined/>}/>
-                    </Form.Item>
+                            <Form.Item name="password" rules={[
+                                {required: true, message: '请输入密码'},
+                                {min: 6, max: 20, message: '密码长度必须是6-20位'}
+                            ]}>
+                                <Input.Password size={'large'} placeholder="密码" prefix={<LockOutlined/>}/>
+                            </Form.Item>
 
-                    <Form.Item>
-                        <Button block type="primary" htmlType="submit">登录</Button>
-                    </Form.Item>
-                    <Row justify={'end'}>
-                        <Col>
-                            没有账号?
-                            <Link href={'/account/register'}><a>注册一个</a></Link>
-                        </Col>
-                    </Row>
-                </Form>
-            </Card>
-        </LoginWrapper>
+                            <Form.Item>
+                                <Button block type="primary" htmlType="submit">登录</Button>
+                            </Form.Item>
+                            <Row justify={'end'}>
+                                <Col>
+                                    没有账号?
+                                    <Link href={'/account/register'}><a>注册一个</a></Link>
+                                </Col>
+                            </Row>
+                        </Form>
+                    </Card>
+                </LoginWrapper> : <Loading/>
+            }
+        </div>
     );
 };
+
+function mapStateToProps(state: ConnectState) {
+    return {
+        userInfo: state.global.userInfo
+    }
+}
 
 function mapDispatchToProps(dispatch: Dispatch<any>) {
     return {
@@ -83,4 +104,4 @@ function mapDispatchToProps(dispatch: Dispatch<any>) {
 }
 
 // @ts-ignore
-export default connect(null, mapDispatchToProps)(Login);
+export default connect(mapStateToProps, mapDispatchToProps)(Login);
