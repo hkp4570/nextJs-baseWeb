@@ -1,18 +1,23 @@
-import React, {useEffect} from 'react';
-import {useRouter} from "next/router";
-import {Avatar, Button, Card, PageHeader, Upload} from 'antd';
-import {ConnectState} from "../../models/connect";
+import React, {Dispatch, useState} from 'react';
 import {connect} from "react-redux";
+import {useRouter} from "next/router";
+import {Avatar, Button, Card, Col, Divider, Input, PageHeader, Row, Space, Upload} from 'antd';
 import {UsersType} from "../../type/type";
-import {Dispatch} from "redux";
 import styled from "styled-components";
-import {UploadOutlined} from "@ant-design/icons";
+import {UploadOutlined, EditOutlined} from "@ant-design/icons";
 import {UploadChangeParam} from "antd/es/upload/interface";
+import {ConnectState} from "../../models/connect";
 
 interface IProps {
     userInfo: UsersType,
-    getUserAPI: () => void ,
+    editUserInfoAPI: (arg:EditParamsType) => Promise<boolean>,
 }
+interface EditParamsType {
+    username?: string,
+    password?: string,
+    intro?: string,
+}
+type EditStatusType = 'normal' | 'username' | 'password' | 'intro';
 const Bg = styled.div<{ coverUrl: string }>`
   height: 320px;
   margin-bottom: 24px;
@@ -28,21 +33,72 @@ const SetUpBg = styled.div`
   right: 20px;
   top: 20px;
 `
-const SetUpAvatar=styled.div`
+const SetUpAvatar = styled.div`
   position: absolute;
   left: 50%;
   top: 50%;
-  transform: translate(-50%,-50%);
+  transform: translate(-50%, -50%);
 `
-const Information = ({userInfo, getUserAPI}:IProps) => {
-    console.log(userInfo, 'userinfo')
+const Information = ({userInfo, editUserInfoAPI}: IProps) => {
+    const [editStatus, setEditStatus] = useState<EditStatusType>('normal');
+    const [value, setValue] = useState<string>('');
     const Router = useRouter();
-    const handleBgUpload = (file:UploadChangeParam<unknown>) => {
+    const handleBgUpload = (file: UploadChangeParam<unknown>) => {
         console.log(file)
     }
-    useEffect(() => {
-        getUserAPI();
-    },[getUserAPI])
+
+    const editUserInfo = (type: EditStatusType) => {
+        setEditStatus(type);
+    }
+    const handleSubmit = (type: 'ok' | 'cancel') => {
+        if (type === 'ok') {
+            editUserInfoAPI({[editStatus]:value}).then(res => {
+                if(res){
+                    setEditStatus('normal');
+                }
+            })
+        } else {
+            setEditStatus('normal')
+        }
+    }
+    const renderEditContent = () => {
+        const _userInput = <Input
+            style={{width: 369}}
+            allowClear
+            onChange={e => setValue(e.target.value)}
+            onPressEnter={() => handleSubmit('ok')}
+        />
+        const _passInput = <Input.Password
+            onChange={e => setValue(e.target.value)}
+            onPressEnter={() => handleSubmit('ok')}
+        />
+        const _introInput = <Input.TextArea
+            rows={3}
+            onChange={e => setValue(e.target.value)}
+            onPressEnter={() => handleSubmit('ok')}
+        />
+
+        return <div>
+            {{
+                'username': _userInput,
+                'password': _passInput,
+                'intro': _introInput,
+                'normal': '',
+            }[editStatus]}
+            <div className="submit" style={{marginTop: 12}}>
+                <Space>
+                    <Button
+                        type="primary"
+                        onClick={() => handleSubmit('ok')}
+                    >
+                        提交
+                    </Button>
+                    <Button onClick={() => handleSubmit('cancel')}>取消</Button>
+                </Space>
+            </div>
+        </div>
+    }
+
     return (
         <div>
             <PageHeader title={'个人资料'} onBack={() => Router.back()}/>
@@ -50,7 +106,7 @@ const Information = ({userInfo, getUserAPI}:IProps) => {
                 <Bg coverUrl={userInfo.coverFile?.url ?? ''}>
                     <SetUpBg>
                         <Upload onChange={handleBgUpload}>
-                            <Button icon={<UploadOutlined />}>设置背景</Button>
+                            <Button icon={<UploadOutlined/>}>设置背景</Button>
                         </Upload>
                     </SetUpBg>
                     <SetUpAvatar>
@@ -61,22 +117,57 @@ const Information = ({userInfo, getUserAPI}:IProps) => {
                         />
                         <br/>
                         <Upload onChange={handleBgUpload}>
-                            <Button icon={<UploadOutlined />}>设置头像</Button>
+                            <Button icon={<UploadOutlined/>}>设置头像</Button>
                         </Upload>
                     </SetUpAvatar>
                 </Bg>
+                <Row gutter={24}>
+                    <Col span={24}>
+                        用户名：
+                        {
+                            editStatus === 'username' ? (renderEditContent()) : (<Space>
+                                <span>{userInfo.username}</span>
+                                <EditOutlined style={{cursor: 'pointer'}} onClick={() => editUserInfo('username')}/>
+                            </Space>)
+                        }
+
+                    </Col>
+                    <Divider/>
+                    <Col span={24}>
+                        密码：
+                        {
+                            editStatus === 'password' ? (renderEditContent()) : (<Space>
+                                <span>******</span>
+                                <EditOutlined style={{cursor: 'pointer'}} onClick={() => editUserInfo('password')}/>
+                            </Space>)
+                        }
+
+                    </Col>
+                    <Divider/>
+                    <Col span={24}>
+                        自我介绍：
+                        {
+                            editStatus === 'intro' ? (renderEditContent()) : (<Space>
+                                <span>{userInfo.intro}</span>
+                                <EditOutlined style={{cursor: 'pointer'}} onClick={() => editUserInfo('intro')}/>
+                            </Space>)
+                        }
+                    </Col>
+                </Row>
             </Card>
         </div>
     );
 };
-function mapStateToProps(state:ConnectState):any{
+
+function mapStateToProps(state: ConnectState): any {
     return {
         userInfo: state.global.userInfo
     }
 }
-function mapDispatchToProps(dispatch:Dispatch<any>){
+
+function mapDispatchToProps(dispatch: Dispatch<any>) {
     return {
-        getUserAPI: () => dispatch({type:'global/getUserAPI'})
+        editUserInfoAPI: (payload:EditParamsType) => dispatch({type: 'global/editUserInfo', payload})
     }
 }
 

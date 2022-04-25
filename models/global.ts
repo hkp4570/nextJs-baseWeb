@@ -1,6 +1,7 @@
 import {getTasks, login} from '../services/global'
 import {Model} from 'dva-no-router';
 import {TasksType, UsersType} from "../type/type";
+import {ConnectState} from "./connect";
 
 export interface GlobalModelState {
     userInfo: UsersType | object,
@@ -9,7 +10,7 @@ export interface GlobalModelState {
 }
 
 interface GlobalModel extends Model {
-    state: GlobalModelState
+    state: GlobalModelState,
 }
 
 const globalModel: GlobalModel = {
@@ -21,11 +22,11 @@ const globalModel: GlobalModel = {
     },
     effects: {
         * login({payload}, {call, put}) {
-            const response = yield call(login,payload);
-            if(response.code === 0){
+            const response = yield call(login, payload);
+            if (response.code === 0) {
                 yield put({
                     type: 'setState',
-                    payload:{ userInfo: response.data }
+                    payload: {userInfo: response.data}
                 })
                 return true;
             }
@@ -55,10 +56,31 @@ const globalModel: GlobalModel = {
                 })
             }
         },
-        * setNewTask({payload}, {put}){
+        * setNewTask({payload}, {put}) {
             yield put({
                 type: 'setState',
                 payload,
+            })
+        },
+        * editUserInfo({payload}, {put, select}) {
+            const userInfo = yield select((state: ConnectState) => state.global.userInfo);
+            const _userInfo = JSON.parse(JSON.stringify(userInfo));
+            const newUserInfo = Object.assign(_userInfo, payload);
+            // 需要修改mock里面的数据 这样列表的用户信息也会修改
+            yield put({
+                type: 'setState',
+                payload: {
+                    userInfo: newUserInfo
+                }
+            })
+            return true;
+        },
+        * logout({_}, {put}) {
+            yield put({
+                type: 'setState',
+                payload: {
+                    userInfo: {}
+                }
             })
         }
     },

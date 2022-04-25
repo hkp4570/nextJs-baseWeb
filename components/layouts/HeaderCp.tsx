@@ -1,13 +1,40 @@
-import React from 'react'
-import {Col, Row, Space, Tooltip} from 'antd'
-import Link from 'next/link'
+import React, {Dispatch} from 'react';
+import {connect} from 'react-redux';
+import {Avatar, Col, Dropdown, Menu, Row, Space, Tooltip} from 'antd';
+import Link from 'next/link';
 import {useRouter} from 'next/router';
 import {
-    PlusOutlined
+    PlusOutlined,
+    LogoutOutlined,
+    ProfileOutlined,
 } from '@ant-design/icons'
+import {ConnectState} from "../../models/connect";
+import {UsersType} from "../../type/type";
 
-function HeaderCp() {
+function HeaderCp({userInfo, logoutAPI}: { userInfo: UsersType, logoutAPI: () => void }) {
     const router = useRouter();
+    const logout = () => {
+        logoutAPI();
+        router.replace('/');
+    }
+    const menu = (
+        <Menu>
+            <Menu.Item key={'information'}>
+                <Link href="/account/information">
+                    <a>
+                        <ProfileOutlined/>
+                        <span style={{paddingLeft: 8}}>个人资料</span>
+                    </a>
+                </Link>
+            </Menu.Item>
+            <Menu.Item key={'logout'}>
+                <a onClick={() => logout()}>
+                    <LogoutOutlined/>
+                    <span style={{paddingLeft: 8}}>退出登录</span>
+                </a>
+            </Menu.Item>
+        </Menu>
+    )
     return (
         <Row justify={'space-between'}>
             <Row justify={'start'}>
@@ -34,11 +61,21 @@ function HeaderCp() {
                                 <PlusOutlined className={'plusIcon'}/>
                             </Tooltip>
                         </a>
-
                     </Link>
-                    <Link href={`/account/login?redirect=${router.asPath}`}>
-                        <a className={'loginBtn'}>登录</a>
-                    </Link>
+                    {
+                        Object.keys(userInfo).length ? (
+                            <Dropdown overlay={menu} placement="bottomLeft">
+                                <a>
+                                    <Avatar src={userInfo.avatarFile.thumbUrls.small}/>
+                                    <span style={{paddingLeft: 8}}>{userInfo.username}</span>
+                                </a>
+                            </Dropdown>
+                        ) : (
+                            <Link href={`/account/login?redirect=${router.asPath}`}>
+                                <a className={'loginBtn'}>登录</a>
+                            </Link>
+                        )
+                    }
                 </Space>
             </Col>
             <style jsx>{`
@@ -82,5 +119,16 @@ function HeaderCp() {
     );
 }
 
+function mapStateToProps(state: ConnectState): any {
+    return {
+        userInfo: state.global.userInfo
+    }
+}
 
-export default HeaderCp;
+function mapDispatchToProps(dispatch: Dispatch<any>) {
+    return {
+        logoutAPI: () => dispatch({type: 'global/logout'})
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(HeaderCp);
