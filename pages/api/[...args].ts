@@ -20,7 +20,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
     }
     if (args[0] === 'taskDetail' && req.method === 'POST') {
         const {id} = JSON.parse(req.body);
-        const taskDetail = tasks.find(e => +e.id === id);
+        const taskDetail = tasks.find(e => +e.id === +id);
         res.end(JSON.stringify({...commRes, data: taskDetail}));
     }
 }

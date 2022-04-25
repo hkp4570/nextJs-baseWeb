@@ -1,6 +1,6 @@
 const url = require('url')
 import Router from "next/router"
-import type { ParsedUrlQuery } from 'querystring'
+import type {ParsedUrlQuery} from 'querystring'
 
 export type BaseRouter = {
     route?: string;
@@ -14,7 +14,7 @@ export type BaseRouter = {
     isLocaleDomain?: boolean;
 }
 
-export function loginUrl({pathname, query}:BaseRouter){
+export function loginUrl({pathname, query}: BaseRouter) {
     const from = url.format({
         pathname: pathname || Router.pathname,
         query: query || Router.query,
@@ -27,10 +27,16 @@ export function loginUrl({pathname, query}:BaseRouter){
     })
 }
 
-export function needLogin({pathname, query} : BaseRouter){
+export function needLogin({pathname, query}: BaseRouter) {
     Router.replace(loginUrl({pathname, query}));
 }
 
-export function isBrowser(){
+export function isBrowser() {
     return typeof window !== 'undefined';
+}
+
+export function sleep(time: number) {
+    return new Promise(resolve => {
+        setTimeout(resolve, time * 1000)
+    })
 }

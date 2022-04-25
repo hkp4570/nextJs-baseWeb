@@ -7,14 +7,14 @@ import {
     PlusOutlined,
     LogoutOutlined,
     ProfileOutlined,
-} from '@ant-design/icons'
+} from '@ant-design/icons';
 import {ConnectState} from "../../models/connect";
 import {UsersType} from "../../type/type";
 
-function HeaderCp({userInfo, logoutAPI}: { userInfo: UsersType, logoutAPI: () => void }) {
+function HeaderCp({userInfo, logoutAPI}: { userInfo?: UsersType, logoutAPI?: () => void }) {
     const router = useRouter();
     const logout = () => {
-        logoutAPI();
+        logoutAPI!();
         router.replace('/');
     }
     const menu = (
@@ -63,11 +63,11 @@ function HeaderCp({userInfo, logoutAPI}: { userInfo: UsersType, logoutAPI: () =>
                         </a>
                     </Link>
                     {
-                        Object.keys(userInfo).length ? (
+                        Object.keys(userInfo!).length ? (
                             <Dropdown overlay={menu} placement="bottomLeft">
                                 <a>
-                                    <Avatar src={userInfo.avatarFile.thumbUrls.small}/>
-                                    <span style={{paddingLeft: 8}}>{userInfo.username}</span>
+                                    <Avatar src={userInfo!.avatarFile.thumbUrls.small}/>
+                                    <span style={{paddingLeft: 8}}>{userInfo!.username}</span>
                                 </a>
                             </Dropdown>
                         ) : (

@@ -1,5 +1,6 @@
 import {http} from '../utils/request'
 import {CommentParamsType, CommentType, LoginParamsType, TasksType, UsersType} from "../type/type";
+import {sleep} from "../utils/util";
 
 interface TaskParamsType extends API.SearchParams {
     id?: number,
@@ -26,7 +27,8 @@ export async function getTasks(taskParams: TaskParamsType) {
     };
 }
 
-export function getTaskDetail(params: TaskParamsType) {
+export async function getTaskDetail(params: TaskParamsType) {
+    await sleep(1);
     return http<API.ResponseType<TasksType>>('/api/taskDetail', {
         method: 'POST',
         data: params,
