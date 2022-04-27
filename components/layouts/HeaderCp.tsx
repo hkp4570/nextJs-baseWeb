@@ -17,6 +17,12 @@ function HeaderCp({userInfo, logoutAPI}: { userInfo?: UsersType, logoutAPI?: () 
         logoutAPI!();
         router.replace('/');
     }
+    const login = () => {
+        // href={`/account/login?redirect=${router.asPath}`}
+        if(!router.asPath.includes('login')){
+            router.push(`/account/login?redirect=${router.asPath}`)
+        }
+    }
     const menu = (
         <Menu>
             <Menu.Item key={'information'}>
@@ -70,11 +76,7 @@ function HeaderCp({userInfo, logoutAPI}: { userInfo?: UsersType, logoutAPI?: () 
                                     <span style={{paddingLeft: 8}}>{userInfo!.username}</span>
                                 </a>
                             </Dropdown>
-                        ) : (
-                            <Link href={`/account/login?redirect=${router.asPath}`}>
-                                <a className={'loginBtn'}>登录</a>
-                            </Link>
-                        )
+                        ) : (<a className={'loginBtn'} onClick={() => login()}>登录</a>)
                     }
                 </Space>
             </Col>
