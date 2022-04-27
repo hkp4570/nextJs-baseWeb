@@ -1,12 +1,26 @@
-import React from 'react';
+import React, {useState} from 'react';
 import styled from 'styled-components';
-import {Button, Card, Col, Descriptions, Divider, Row, Skeleton, Space, Typography} from 'antd';
+import {
+    Button,
+    Card,
+    Col,
+    Descriptions,
+    Divider,
+    Drawer,
+    Form,
+    FormInstance,
+    Row,
+    Skeleton,
+    Space,
+    Typography
+} from 'antd';
 import {useRouter} from "next/router";
 import {getComment, getTaskDetail} from "../../services/global";
 import Loading from "../../components/Loading";
 import {CommentType, TasksType} from "../../type/type";
 import moment from "moment";
 import TaskCommentItem from "../../components/tasks/TaskCommentItem";
+import EditContent from "../../components/tasks/EditContent";
 
 interface IProps {
     taskDetail: TasksType,
@@ -23,11 +37,30 @@ const Bg = styled.div<{url:string}>`
   justify-content: center;
   align-items: center;
 `
+const DrawerFooter = styled.div`
+  position: absolute;
+  bottom: 30px;
+  right: 30px;
+`
+
 const Detail = ({taskDetail,commentDetail}:IProps) => {
+    const [visible,setVisible] = useState<boolean>(false);
+    const [form] = Form.useForm();
     const {user} = taskDetail;
     const router = useRouter();
     if(router.isFallback){
         return <Loading/>
+    }
+    const handleCloseDrawer = (type: 'ok'|'cancel') => {
+        if(type === 'ok'){
+           form.validateFields().then(value => {
+               console.log(value,'value')
+           }).catch(error => {
+               console.log(error, '验证错误');
+           })
+        }else{
+            setVisible(false)
+        }
     }
     return (
         <div>
@@ -35,7 +68,7 @@ const Detail = ({taskDetail,commentDetail}:IProps) => {
                 <Typography.Title>{taskDetail.title}</Typography.Title>
                 <Space size={30}>
                     <Button disabled>付费</Button>
-                    <Button>编辑</Button>
+                    <Button onClick={() => setVisible(true)}>编辑</Button>
                 </Space>
             </Bg>
             <Row gutter={24} style={{padding:36}}>
@@ -99,6 +132,22 @@ const Detail = ({taskDetail,commentDetail}:IProps) => {
                     </Card>
                 </Col>
             </Row>
+            <Drawer
+                visible={visible}
+                title={'编辑任务'}
+                width={600}
+                destroyOnClose
+                onClose={() => handleCloseDrawer('cancel')}
+            >
+                <EditContent form={form} detail={taskDetail}/>
+                {/*<Divider/>*/}
+                <DrawerFooter>
+                    <Space>
+                        <Button onClick={() => handleCloseDrawer('cancel')}>取消</Button>
+                        <Button type={'primary'} onClick={() => handleCloseDrawer('ok')}>确定</Button>
+                    </Space>
+                </DrawerFooter>
+            </Drawer>
         </div>
     );
 };
