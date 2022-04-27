@@ -1,21 +1,104 @@
 import React from 'react';
+import styled from 'styled-components';
+import {Button, Card, Col, Descriptions, Divider, Row, Skeleton, Space, Typography} from 'antd';
 import {useRouter} from "next/router";
-import {getTaskDetail} from "../../services/global";
+import {getComment, getTaskDetail} from "../../services/global";
 import Loading from "../../components/Loading";
-import {TasksType} from "../../type/type";
+import {CommentType, TasksType} from "../../type/type";
+import moment from "moment";
+import TaskCommentItem from "../../components/tasks/TaskCommentItem";
 
 interface IProps {
-    taskDetail: TasksType
+    taskDetail: TasksType,
+    commentDetail: CommentType[],
 }
-const Detail = ({taskDetail}:IProps) => {
-    console.log(taskDetail, 'taskDetail');
+const Bg = styled.div<{url:string}>`
+  height: 320px;
+  background-image: url(${props => props.url});
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+`
+const Detail = ({taskDetail,commentDetail}:IProps) => {
+    const {user} = taskDetail;
     const router = useRouter();
     if(router.isFallback){
         return <Loading/>
     }
     return (
         <div>
-            任务详情
+            <Bg url={taskDetail.coverFile.url}>
+                <Typography.Title>{taskDetail.title}</Typography.Title>
+                <Space size={30}>
+                    <Button disabled>付费</Button>
+                    <Button>编辑</Button>
+                </Space>
+            </Bg>
+            <Row gutter={24} style={{padding:36}}>
+                <Col span={16}>
+                    <Card title={'任务详情'}>
+                        <Descriptions column={2}>
+                            <Descriptions.Item label="发布者">{user.username}</Descriptions.Item>
+                            <Descriptions.Item label="发布时间">{moment(taskDetail.createdAt).format('YYYY-MM-DD')}</Descriptions.Item>
+                            <Descriptions.Item label="开始时间">{moment(taskDetail.startAt).format('YYYY-MM-DD')}</Descriptions.Item>
+                            <Descriptions.Item label="结束时间">{moment(taskDetail.stopAt).format('YYYY-MM-DD')}</Descriptions.Item>
+                            <Descriptions.Item label="费用" span={2}>{taskDetail.payAmount}</Descriptions.Item>
+                            <Descriptions.Item>{taskDetail.desc}</Descriptions.Item>
+                        </Descriptions>
+                    </Card>
+                    <Divider/>
+                    <Card title={'任务内容'}>
+                        {taskDetail.status === 'pending' || taskDetail.text ?
+                            <Skeleton loading={taskDetail.status === 'pending'} title={false} >
+                                <Row>
+                                    <Typography.Paragraph type="secondary">
+                                        {taskDetail.text}
+                                    </Typography.Paragraph>
+                                </Row>
+                            </Skeleton> :
+                            null}
+
+                        {taskDetail.status === 'pending' || taskDetail.link ?
+                            <Row style={{ marginTop: 12 }}>
+                                <Col span={3}>
+                                    <p>链接</p>
+                                </Col>
+                                <Col span={21}>
+                                    <Skeleton loading={taskDetail.status === 'pending'} title={false}>
+                                        <Typography.Paragraph copyable={{ text: taskDetail.link }} style={{ marginBottom: 0 }}>
+                                            <a href={taskDetail.link} target="_blank" rel="noreferrer">{taskDetail.link}</a>
+                                        </Typography.Paragraph>
+                                    </Skeleton>
+                                </Col>
+                            </Row> :
+                            null}
+
+                        {taskDetail.status === 'pending' || taskDetail.credentials ?
+                            <Row style={{ marginTop: 12 }}>
+                                <Col span={3}>
+                                    <p>凭证</p>
+                                </Col>
+                                <Col span={21}>
+                                    <Skeleton loading={taskDetail.status === 'pending'} title={false}>
+                                        <Typography.Paragraph copyable style={{ marginBottom: 0 }}>
+                                            {taskDetail.credentials}
+                                        </Typography.Paragraph>
+                                    </Skeleton>
+                                </Col>
+                            </Row> :
+                            null}
+                    </Card>
+                </Col>
+                <Col span={8}>
+                    <Card title={'评论'}>
+                        {commentDetail.map(comm => <TaskCommentItem key={comm.id} comment={comm}/>)}
+                    </Card>
+                </Col>
+            </Row>
         </div>
     );
 };
@@ -23,12 +106,12 @@ const Detail = ({taskDetail}:IProps) => {
 export default Detail;
 
 export async function getStaticProps({params}: { params: { taskId: string } }) {
-    console.log(params,'params')
     const resp = await getTaskDetail({id: Number(params.taskId)});
-    console.log(resp,'resp')
+    const comments = await getComment({taskId: Number(params.taskId), userId:resp.data.user.id});
     return {
         props: {
-            taskDetail: resp.data
+            taskDetail: resp.data,
+            commentDetail: comments.data,
         }
     }
 }
