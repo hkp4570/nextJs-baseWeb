@@ -20,7 +20,7 @@ module.exports = withPlugins(plugins,{
     publicRuntimeConfig: {
         // Will be available on both server and client
         staticFolder: '/static',
-        baseUrl: 'http://localhost:3001/'
+        baseUrl: 'http://localhost:3000/'
     },
     env:{
         name: 'jwpay',

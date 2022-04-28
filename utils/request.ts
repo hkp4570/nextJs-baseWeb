@@ -5,8 +5,8 @@ import {useCallback} from "react";
 interface Config extends RequestInit {
     data?: object,
 }
-
-const baseUrl = 'http://localhost:3001';
+// TODO: 如果此端口被占用 修改为当前项目启动的端口号
+const baseUrl = 'http://localhost:3000';
 export const http = async<H> (url: string, config: Config = {}) => {
     const {data, headers, ...customConfig} = config;
     const _config = {

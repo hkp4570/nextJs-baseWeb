@@ -8,7 +8,6 @@ import TaskCard from "../../components/tasks/TaskCard";
 import TaskCommentItem from '../../components/tasks/TaskCommentItem';
 import {PaginationProps} from "antd/es/pagination/Pagination";
 import {connect} from "react-redux";
-// import {ConnectState} from "../../models/connect";
 import {getOrCreateStore} from "../../dva";
 
 interface IProps {
@@ -94,18 +93,6 @@ const Detail = (props: IProps) => {
             ;
     }
 ;
-
-// function mapStateToProps(state: ConnectState) {
-//     return {
-//         newTasks: state.global.newTasks,
-//     }
-// }
-//
-// function mapDispatchToProps(dispatch: Dispatch<any>) {
-//     return {
-//         getNewTask: (payload: { pageNum: number }) => dispatch({type: 'global/getNewTask', payload})
-//     }
-// }
 
 export default connect(null, null)(Detail);
 
